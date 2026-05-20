@@ -185,7 +185,7 @@ async def _run_pending(chat_id: int, delay: int) -> None:
 # ─────────────────────────────────────────────
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/play(?:@\w+)?(?:\s+(?P<q>.+))?$")
+    & filters.regex(r"^/(?P<cmd>v?play)(?:@\w+)?(?:\s+(?P<q>.+))?$")
 )
 async def play_handler(_, message: Message) -> None:
 
@@ -261,6 +261,7 @@ async def play_handler(_, message: Message) -> None:
     # ─────────────────────────────────────────
     match = message.matches[0]
     query = (match.group("q") or "").strip()
+    cmd   = (match.group("cmd") or "play").strip()   # "play" or "vplay"
 
     try:
         await message.delete()
@@ -290,18 +291,19 @@ async def play_handler(_, message: Message) -> None:
         await bot.send_message(
             chat_id,
             "<b>❍ ᴜsᴀɢᴇ :</b> <code>/play song name</code>\n"
-            "<b>❍ ᴏʀ :</b> <code>/play youtube url</code>",
+            "<b>❍ ᴏʀ :</b> <code>/play youtube url</code>\n"
+            "<b>❍ ᴠɪᴅᴇᴏ :</b> <code>/vplay song name</code>",
             parse_mode=ParseMode.HTML,
         )
         return
 
-    await _process_play(message, query)
+    await _process_play(message, query, video=(cmd == "vplay"))
 
 
 # ─────────────────────────────────────────────
 # PROCESS PLAY
 # ─────────────────────────────────────────────
-async def _process_play(message: Message, query: str) -> None:
+async def _process_play(message: Message, query: str, video: bool = False) -> None:
 
     chat_id = message.chat.id
 
@@ -431,6 +433,7 @@ async def _process_play(message: Message, query: str) -> None:
         "requester":        req,
         "requester_id":     req_id,
         "thumbnail":        thumb,
+        "video":            video,
     }
 
     pos = add_to_queue(chat_id, song)
@@ -452,4 +455,3 @@ async def _process_play(message: Message, query: str) -> None:
             reply_markup=kb,
         )
         await pm.delete()
-    
