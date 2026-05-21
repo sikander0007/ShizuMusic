@@ -267,3 +267,54 @@ def remove_broadcast_chat(chat_id: int) -> None:
         col.delete_one({"_id": chat_id})
     except Exception as e:
         logger.error(f"[DB] remove_broadcast_chat: {e}")
+
+
+# ── Chat Effects (speed / bass / effects_on) ───────────────────────────────────
+
+def save_chat_effects(chat_id: int, speed: float, bass: int, enabled: bool) -> None:
+    """Save current effect settings for a chat to MongoDB."""
+    col = _col("chat_effects")
+    if col is None:
+        return
+    try:
+        col.update_one(
+            {"_id": chat_id},
+            {"$set": {
+                "_id":     chat_id,
+                "speed":   speed,
+                "bass":    bass,
+                "enabled": enabled,
+            }},
+            upsert=True,
+        )
+    except Exception as e:
+        logger.error(f"[DB] save_chat_effects: {e}")
+
+
+def load_chat_effects(chat_id: int) -> dict:
+    """Load effect settings for a chat. Returns defaults if not found."""
+    col = _col("chat_effects")
+    if col is None:
+        return {"speed": 1.0, "bass": 0, "enabled": False}
+    try:
+        doc = col.find_one({"_id": chat_id})
+        if doc:
+            return {
+                "speed":   doc.get("speed",   1.0),
+                "bass":    doc.get("bass",     0),
+                "enabled": doc.get("enabled",  False),
+            }
+    except Exception as e:
+        logger.error(f"[DB] load_chat_effects: {e}")
+    return {"speed": 1.0, "bass": 0, "enabled": False}
+
+
+def delete_chat_effects(chat_id: int) -> None:
+    """Remove effect settings for a chat."""
+    col = _col("chat_effects")
+    if col is None:
+        return
+    try:
+        col.delete_one({"_id": chat_id})
+    except Exception as e:
+        logger.error(f"[DB] delete_chat_effects: {e}")
