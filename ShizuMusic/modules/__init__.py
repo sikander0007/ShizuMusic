@@ -9,6 +9,7 @@
 ALL_MODULES = [
     "autoplay",
     "bot",
+    "effects",
     "play",
     "pause",
     "resume",
