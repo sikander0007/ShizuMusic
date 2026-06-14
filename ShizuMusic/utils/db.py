@@ -441,3 +441,26 @@ def delete_chat_effects(chat_id: int) -> None:
     except Exception as e:
         logger.error(f"[DB] delete_chat_effects: {e}")
                
+# ── NSFW Filter Settings ────────────────────────────────────────────────────
+
+def is_nsfw_enabled(chat_id: int) -> bool:
+    col = _col("nsfw_settings")
+    if col is None:
+        return True   # default ON agar DB available na hove
+    try:
+        doc = col.find_one({"_id": chat_id})
+        if doc is None:
+            return True   # default ON — naye group vich filter pehle hi active
+        return doc.get("enabled", True)
+    except Exception:
+        return True
+
+
+def set_nsfw_enabled(chat_id: int, enabled: bool) -> None:
+    col = _col("nsfw_settings")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"enabled": enabled}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_nsfw_enabled: {e}")
