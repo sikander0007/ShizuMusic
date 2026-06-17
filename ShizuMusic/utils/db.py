@@ -441,33 +441,95 @@ def delete_chat_effects(chat_id: int) -> None:
     except Exception as e:
         logger.error(f"[DB] delete_chat_effects: {e}")
                
-# ── NSFW Filter Settings ────────────────────────────────────────────────────
+# ── Moderation Filter Settings (NSFW / Bad-word / Link / Document) ───────────
+# All four filters live as fields on the same per-chat document so a single
+# read/write covers the whole moderation panel. Each defaults to True (ON)
+# when unset, so a brand-new group is protected from day one.
+#
+#   { "_id": chat_id, "nsfw": bool, "badword": bool, "link": bool, "document": bool }
+#
+# "enabled" is kept in sync with "nsfw" for backward compatibility with any
+# older code/data that still reads the original field name directly.
 
-def is_nsfw_enabled(chat_id: int) -> bool:
+DEFAULT_MOD_SETTINGS = {
+    "nsfw":     True,
+    "badword":  True,
+    "link":     True,
+    "document": True,
+}
+
+
+def get_mod_settings(chat_id: int) -> dict:
+    """Return all moderation toggles for a chat (defaults True if unset)."""
     col = _col("nsfw_settings")
     if col is None:
-        return True   # default ON agar DB available na hove
+        return DEFAULT_MOD_SETTINGS.copy()
     try:
         doc = col.find_one({"_id": chat_id})
         if doc is None:
-            return True   # default ON — naye group vich filter pehle hi active
-        return doc.get("enabled", True)
-    except Exception:
-        return True
+            return DEFAULT_MOD_SETTINGS.copy()
+        settings = DEFAULT_MOD_SETTINGS.copy()
+        for key in settings:
+            if key in doc:
+                settings[key] = doc[key]
+            elif key == "nsfw" and "enabled" in doc:
+                settings[key] = doc["enabled"]   # legacy field fallback
+        return settings
+    except Exception as e:
+        logger.error(f"[DB] get_mod_settings: {e}")
+        return DEFAULT_MOD_SETTINGS.copy()
 
 
-def set_nsfw_enabled(chat_id: int, enabled: bool) -> None:
+def set_mod_setting(chat_id: int, key: str, value: bool) -> None:
+    if key not in DEFAULT_MOD_SETTINGS:
+        return
     col = _col("nsfw_settings")
     if col is None:
         return
     try:
-        col.update_one({"_id": chat_id}, {"$set": {"enabled": enabled}}, upsert=True)
+        update = {key: value}
+        if key == "nsfw":
+            update["enabled"] = value   # keep legacy field in sync
+        col.update_one({"_id": chat_id}, {"$set": update}, upsert=True)
     except Exception as e:
-        logger.error(f"[DB] set_nsfw_enabled: {e}")
+        logger.error(f"[DB] set_mod_setting: {e}")
 
 
-# ── NSFW Approved Users (per-chat whitelist) ─────────────────────────────────
-# Approved user di media/text NSFW filter dwara scan nahi hundi.
+def is_nsfw_enabled(chat_id: int) -> bool:
+    return get_mod_settings(chat_id)["nsfw"]
+
+
+def set_nsfw_enabled(chat_id: int, enabled: bool) -> None:
+    set_mod_setting(chat_id, "nsfw", enabled)
+
+
+def is_badword_enabled(chat_id: int) -> bool:
+    return get_mod_settings(chat_id)["badword"]
+
+
+def set_badword_enabled(chat_id: int, enabled: bool) -> None:
+    set_mod_setting(chat_id, "badword", enabled)
+
+
+def is_link_filter_enabled(chat_id: int) -> bool:
+    return get_mod_settings(chat_id)["link"]
+
+
+def set_link_filter_enabled(chat_id: int, enabled: bool) -> None:
+    set_mod_setting(chat_id, "link", enabled)
+
+
+def is_document_filter_enabled(chat_id: int) -> bool:
+    return get_mod_settings(chat_id)["document"]
+
+
+def set_document_filter_enabled(chat_id: int, enabled: bool) -> None:
+    set_mod_setting(chat_id, "document", enabled)
+
+
+# ── Moderation Approved Users (per-chat whitelist) ───────────────────────────
+# An approved user's media/text bypasses ALL moderation filters above
+# (NSFW, bad words, links, blocked files) — not just NSFW.
 
 def approve_nsfw_user(chat_id: int, user_id: int) -> None:
     col = _col("nsfw_approved")
