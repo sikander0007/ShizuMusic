@@ -24,7 +24,7 @@ from ShizuMusic.modules.block import user_allowed
 
 def supp_markup():
     return InlineKeyboardMarkup([[
-        InlineKeyboardButton(text="🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
+        InlineKeyboardButton(text="sᴜᴘᴘᴏʀᴛ", url=config.SUPPORT_GROUP),
     ]])
 
 
@@ -69,7 +69,7 @@ async def ping_cmd(client, message: Message) -> None:
         f"<b>❍ ᴄᴘᴜ :</b> <code>{cpu}%</code>\n"
         f"<b>❍ ᴅɪsᴋ :</b> <code>{disk_str}</code>\n"
         f"<b>❍ ᴘʏᴛɢᴄ :</b> <code>{pytg}ms</code>\n\n"
-        f"<b>❍ 𝖡ʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>"
+        f"<b>❍ 𝖡ʏ » <a href=\"{config.UPDATES_CHANNEL}\">𝐒𝐇𝐈𝐊𝐀𝐀𝐑𝐈 𝐁𝐎𝐓𝐒</a></b>"
     )
 
     await message.reply_photo(
@@ -137,7 +137,7 @@ async def speedtest_cmd(client, message: Message) -> None:
         f"<b>❍ ᴘɪɴɢ     :</b> <code>{ping:.2f} ms</code>\n"
         f"<b>❍ ᴅᴏᴡɴʟᴏᴀᴅ :</b> <code>{download:.2f} Mbps</code>\n"
         f"<b>❍ ᴜᴘʟᴏᴀᴅ   :</b> <code>{upload:.2f} Mbps</code>\n\n"
-        f"<b>❍ 𝖡ʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>"
+        f"<b>❍ 𝖡ʏ » <a href=\"{config.UPDATES_CHANNEL}\">𝐒𝐇𝐈𝐊𝐀𝐀𝐑𝐈 𝐁𝐎𝐓𝐒</a></b>"
     )
 
     await m.delete()
