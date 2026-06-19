@@ -261,9 +261,6 @@ _HELP_TEXTS = {
         "<b>│❍ /id</b> <code>@username</code>\n"
         "<b>│   ɢᴇᴛ ᴀɴʏ ᴜsᴇʀ's ɪᴅ</b>\n"
         "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /repo</b>\n"
-        "<b>│   sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʟɪɴᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
         "<b>│❍ /stats</b>\n"
         "<b>│   ғᴜʟʟ sᴛᴀᴛs (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
         "<b>│   sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ ɪɴғᴏ</b>\n"
@@ -439,23 +436,21 @@ async def _go_back(cbq: CallbackQuery) -> None:
         "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ʙᴏᴛ.</b>\n"
         "<b>├────────────────────▣</b>\n"
         f"<b>│❍ 𝖯ᴏᴡᴇʀᴇᴅ 𝖡ʏ » "
-        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
+        f"<a href='https://t.me/SHIKAARI_BOTS'>𝐒𝐇𝐈𝐊𝐀𝐀𝐑𝐈 𝐁𝐎𝐓𝐒</a></b>\n"
         "<b>╰────────────────────▣</b>"
     )
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
+        [InlineKeyboardButton("ᴧᴅᴅ мᴇ",
                               url=f"{config.BOT_LINK}?startgroup=true")],
         [
-            InlineKeyboardButton("🍬 sᴜᴩᴩᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-            InlineKeyboardButton("🍹 ᴜᴩᴅᴀᴛᴇ 🍹",  url=config.UPDATES_CHANNEL),
+            InlineKeyboardButton("sᴜᴩᴩᴏʀᴛ", url=config.SUPPORT_GROUP),
+            InlineKeyboardButton("ᴜᴩᴅᴀᴛᴇ",  url=config.UPDATES_CHANNEL),
         ],
-        [InlineKeyboardButton("🏩 ʜᴇʟᴩ ᴧɴᴅ ᴄᴏᴍᴍᴀɴᴅs 🏩",
+        [InlineKeyboardButton("ʜᴇʟᴩ ᴧɴᴅ ᴄᴏᴍᴍᴀɴᴅs",
                               callback_data="show_help")],
         [
-            InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
-                                 url=f"tg://user?id={config.OWNER_ID}"),
-            InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
-                                 url="https://github.com/Badmunda05/ShizuMusic/fork"),
+            InlineKeyboardButton("ᴏᴡɴᴇʀ",
+                                 url=f"t.me/JK_SHIKAARI"),
         ],
     ])
 
